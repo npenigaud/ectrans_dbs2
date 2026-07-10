@@ -56,6 +56,7 @@ foreach( program ectrans-benchmark )
                                 DEFINITIONS
                                   VERSION="gpu"
                                   ${util_PRIVATE_DEFINITIONS}
+                                  ${GPU_OFFLOAD}GPU
         )
         ecbuild_target_fortran_module_directory(TARGET ${program}-gpu-${prec} MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/module/${program}-gpu-${prec} )
       endif()
@@ -103,6 +104,7 @@ if( HAVE_ETRANS )
                     DEFINITIONS
                       VERSION="gpu"
                       ${util_PRIVATE_DEFINITIONS}
+                      ${GPU_OFFLOAD}GPU
         )
         ecbuild_target_fortran_module_directory(TARGET ${program}-gpu-${prec} MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/module/${program}-gpu-${prec} )
       endif()

@@ -29,6 +29,7 @@ USE MPL_MODULE, ONLY: MPL_INIT, MPL_MYRANK, MPL_NPROC, MPL_BARRIER, MPL_END
 USE TPM_FIELDS, ONLY: F
 USE TPM_GEOMETRY, ONLY: G
 USE ABORT_TRANS_MOD, ONLY: ABORT_TRANS
+use mpl_doublestack_mod, only : mpl_doublestack,doublestack_init
 use UTILS, ONLY: DETECT_MPIRUN
 
 IMPLICIT NONE
@@ -112,6 +113,14 @@ CALL SETUP_TRANS0(KOUT=IOUT, KERR=IERR, KPRGPNS=IPRGPNS, KPRGPEW=IPRGPEW, KPRTRW
   &               LDMPOFF=.NOT. LLUSE_MPI)
 CALL SETUP_TRANS(KSMAX=JPTRUNCATION, KDGL=2 * (JPTRUNCATION + 1), KLOEN=NLOEN)
 CALL TRANS_INQ(KGPTOTG=IGPTOTG, KGPTOT=IGPTOT)
+
+#if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif
 
 ! Initialise grid point arrays
 IGPBLKS = (IGPTOT - 1) / JPPROMA + 1

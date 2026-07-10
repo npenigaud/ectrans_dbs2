@@ -36,6 +36,7 @@ foreach( precision ${precisions} )
         SOURCES test_adjoint.F90
         LIBS trans${platform_tag}_${precision} parkind_${precision} adjoint_utils_${precision}
         LINKER_LANGUAGE Fortran
+        DEFINITIONS ${GPU_OFFLOAD}GPU
         MPI ${mpi}
         OMP 1
       )
@@ -45,6 +46,7 @@ foreach( precision ${precisions} )
         SOURCES test_dirtrans_adjoint.F90
         LIBS trans${platform_tag}_${precision} parkind_${precision} adjoint_utils_${precision}
         LINKER_LANGUAGE Fortran
+        DEFINITIONS ${GPU_OFFLOAD}GPU
         MPI ${mpi}
         OMP 1
       )
@@ -54,6 +56,7 @@ foreach( precision ${precisions} )
         SOURCES test_invtrans_adjoint.F90
         LIBS trans${platform_tag}_${precision} parkind_${precision} adjoint_utils_${precision}
         LINKER_LANGUAGE Fortran
+        DEFINITIONS ${GPU_OFFLOAD}GPU
         MPI ${mpi}
         OMP 1
       )

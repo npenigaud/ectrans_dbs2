@@ -85,7 +85,9 @@ function( generate_api_test_suite )
                                 ${CMAKE_CURRENT_SOURCE_DIR}/../fpe_trapping.cc
                             LINKER_LANGUAGE Fortran
                             LIBS ${libs}
-                            DEFINITIONS HAVE_FEENABLEEXCEPT=${HAVE_FEENABLEEXCEPT} HAVE_FEDISABLEEXCEPT=${HAVE_FEDISABLEEXCEPT} )
+                            DEFINITIONS HAVE_FEENABLEEXCEPT=${HAVE_FEENABLEEXCEPT} HAVE_FEDISABLEEXCEPT=${HAVE_FEDISABLEEXCEPT} 
+                            $<${HAVE_ACC}:ACCGPU> $<${HAVE_OMP}:OMPGPU>
+                           )
 
     # Prevent the Fortran runtime from trying to provide a main program
     target_link_options( ${suite_name}${suffix} PRIVATE ${NO_FORTRAN_MAIN_FLAG} )

@@ -52,6 +52,10 @@ use MPL_module, only: &
 use MPL_DATA_MODULE, only: &
   MPL_NUMPROC
 
+use MPL_DOUBLESTACK_MOD, only : &
+  MPL_DOUBLESTACK, &
+  DOUBLESTACK_INIT 
+
 implicit none
 
 private :: c_ptr
@@ -647,6 +651,15 @@ function trans_init() bind(C,name="trans_init") result(iret)
   allocate(N_REGIONS(1:N_REGIONS_NS))
   N_REGIONS(1:N_REGIONS_NS)=I_REGIONS(1:N_REGIONS_NS)
   is_init = .True.
+
+#if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
+
 
   iret = TRANS_SUCCESS
 

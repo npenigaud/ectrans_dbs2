@@ -29,7 +29,7 @@ USE PARKIND1,        ONLY: JPIM, JPRB
 USE MPL_MODULE,      ONLY: MPL_INIT, MPL_MYRANK, MPL_NPROC, MPL_BARRIER, MPL_END
 USE ABORT_TRANS_MOD, ONLY: ABORT_TRANS
 USE UTILS,           ONLY: DETECT_MPIRUN, SCALPRODSP
-
+use mpl_doublestack_mod, only : mpl_doublestack,doublestack_init
 IMPLICIT NONE
 
 INTEGER(KIND=JPIM) :: NSMAX, NDGL, NPROC, NPRGPNS, NPRGPEW, NPRTRW, NPRTRV
@@ -128,6 +128,14 @@ CALL SETUP_TRANS0(KOUT=NOUT, KERR=NERR, KPRINTLEV=0, KMAX_RESOL=1, KPRGPNS=NPRGP
 CALL SETUP_TRANS(KSMAX=NSMAX, KDGL=NDGL, KLOEN=NLOEN, LDSPLIT=.TRUE.)
 
 CALL TRANS_INQ(KSPEC2=NSPEC2, KGPTOT=NGPTOT)
+
+#if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif
 
 ! Calculate number of NPROMA blocks
 NGPBLKS = (NGPTOT - 1) / NPROMA + 1

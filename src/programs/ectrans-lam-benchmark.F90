@@ -46,7 +46,7 @@ use oml_mod ,only : oml_max_threads
 use mpl_module
 use yomgstats, only: jpmaxstat
 use yomhook, only : dr_hook_init
-
+use mpl_doublestack_mod, only : mpl_doublestack,doublestack_init
 implicit none
 
 integer(kind=jpim) :: istack, getstackusage
@@ -363,6 +363,17 @@ call esetup_trans(ksmax=nsmax, kmsmax=nmsmax, kdgl=nlat, kdgux=nlat, kloen=nloen
 if( lstats ) call gstats(2, 1)
 
 call etrans_inq(kspec2=nspec2, kspec2g=nspec2g, kgptot=ngptot, kgptotg=ngptotg)
+
+#if defined(OMPGPU)
+  write (0,*) "calling doublestack_init for gpu"
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+  write (0,*) "calling doublestack_init for gpu"
+   call doublestack_init(.true.)
+#else
+  write (0,*) "calling doublestack_init for cpu"
+   call doublestack_init(.false.) 
+#endif
 
 if (nproma == 0) then ! no blocking (default when not specified)
   nproma = ngptot

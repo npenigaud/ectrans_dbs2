@@ -45,6 +45,7 @@ if( HAVE_GPU )
     PRIVATE_DEFINITIONS ECTRANS_HAVE_MPI=${HAVE_MPI}
                         ECTRANS_GPU_VERSION
                         ECTRANS_HAVE_ETRANS=0
+                        $<${HAVE_ACC}:ACCGPU> $<${HAVE_OMP}:OMPGPU>
   )
   if( HAVE_ACC AND CMAKE_Fortran_COMPILER_ID MATCHES NVHPC )
     # Propagate flags as link options for downstream targets. Only required for NVHPC

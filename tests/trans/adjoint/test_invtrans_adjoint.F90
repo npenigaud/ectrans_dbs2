@@ -29,7 +29,7 @@ USE PARKIND1, ONLY: JPIM, JPRB
 USE MPL_MODULE, ONLY: MPL_INIT, MPL_MYRANK, MPL_NPROC, MPL_BARRIER, MPL_END
 USE ABORT_TRANS_MOD, ONLY: ABORT_TRANS
 USE UTILS, ONLY: DETECT_MPIRUN, SCALPRODSP, SCALPRODGP
-
+use mpl_doublestack_mod, only : mpl_doublestack,doublestack_init
 IMPLICIT NONE
 
 INTEGER(KIND=JPIM), PARAMETER :: JPTRUNCATION = 159 ! T159 spectral resolution
@@ -117,6 +117,17 @@ CALL SETUP_TRANS0(KOUT=IOUT, KERR=IERR, KPRGPNS=IPRGPNS, KPRGPEW=IPRGPEW, KPRTRW
   &               LDMPOFF=.NOT. LLUSE_MPI, KPRINTLEV=0)
 CALL SETUP_TRANS(KSMAX=JPTRUNCATION, KDGL=JPNLAT, KLOEN=NLOEN, LDSPLIT=.TRUE.)
 CALL TRANS_INQ(KSPEC2=ISPEC2, KSPEC2G=ISPEC2G, KGPTOT=IGPTOT, KGPTOTG=IGPTOTG)
+
+#if defined(OMPGPU)
+  write (0,*) "calling doublestack_init for gpu"
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+  write (0,*) "calling doublestack_init for gpu"
+   call doublestack_init(.true.)
+#else
+  write (0,*) "calling doublestack_init for cpu"
+   call doublestack_init(.false.) 
+#endif
 
 IGPBLKS = (IGPTOT-1)/JPPROMA+1
 

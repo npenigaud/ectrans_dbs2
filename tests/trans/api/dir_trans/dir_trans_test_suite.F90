@@ -10,7 +10,7 @@ MODULE DIR_TRANS_TEST_SUITE
 
 USE PARKIND1, ONLY: JPIM, JPRB, JPRD
 USE MPL_MODULE, ONLY: MPL_INIT, MPL_NPROC, MPL_MYRANK, MPL_ALLREDUCE, MPL_END
-
+USE MPL_DOUBLESTACK_MOD, ONLY : MPL_DOUBLESTACK, DOUBLESTACK_INIT
 IMPLICIT NONE
 
 #include "setup_trans0.h"
@@ -213,6 +213,14 @@ INTEGER FUNCTION ECTRANS_TEST_TRANS_API_DIR_TRANS_CALL_MODE_1_SCALAR_1() RESULT(
   ZGP = GET_INPUT_FIELD(IMY_PROC, IGPTOTG, IGPBLKS, 1)
   ALLOCATE(ZSPSCALAR(1,ISPEC2))
 
+ #if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
+
   CALL DIR_TRANS(PGP=ZGP, PSPSCALAR=ZSPSCALAR, KPROMA=JPPROMA)
 
   ! Check only the (0,0) mode (global mean) is one and all the rest are zero
@@ -243,6 +251,14 @@ INTEGER FUNCTION ECTRANS_TEST_TRANS_API_DIR_TRANS_CALL_MODE_1_WIND_1() RESULT(KR
   ZGP = ROTATIONAL_WIND(IGPBLKS, I_REGIONS_NS, I_REGIONS_EW)
   ALLOCATE(ZSPVOR(1,ISPEC2))
   ALLOCATE(ZSPDIV(1,ISPEC2))
+
+ #if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
 
   CALL DIR_TRANS(PGP=ZGP, PSPVOR=ZSPVOR, PSPDIV=ZSPDIV, KPROMA=JPPROMA)
 
@@ -288,6 +304,14 @@ INTEGER FUNCTION ECTRANS_TEST_TRANS_API_DIR_TRANS_CALL_MODE_1_WIND_1_SCALAR_1() 
   ALLOCATE(ZSPSCALAR(1,ISPEC2))
   ZGP(:,1:2,:) = ROTATIONAL_WIND(IGPBLKS, I_REGIONS_NS, I_REGIONS_EW)
   ZGP(:,3:3,:) = GET_INPUT_FIELD(IMY_PROC, IGPTOTG, IGPBLKS, 1)
+
+ #if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
 
   CALL DIR_TRANS(PGP=ZGP, PSPVOR=ZSPVOR, PSPDIV=ZSPDIV, PSPSCALAR=ZSPSCALAR, KPROMA=JPPROMA)
 
@@ -341,6 +365,14 @@ INTEGER FUNCTION ECTRANS_TEST_TRANS_API_DIR_TRANS_CALL_MODE_2_PGP3A_1() RESULT(K
   ZGP3A(:,1,:,:) = GET_INPUT_FIELD(IMY_PROC, IGPTOTG, IGPBLKS, 1)
   ALLOCATE(ZSPSC3A(1,ISPEC2,1))
 
+ #if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
+
   CALL DIR_TRANS(PGP3A=ZGP3A, PSPSC3A=ZSPSC3A, KPROMA=JPPROMA)
 
   ! Check only the (0,0) mode (global mean) is one and all the rest are zero
@@ -370,6 +402,14 @@ INTEGER FUNCTION ECTRANS_TEST_TRANS_API_DIR_TRANS_CALL_MODE_2_PGP3B_1() RESULT(K
   ALLOCATE(ZGP3B(JPPROMA,1,1,IGPBLKS))
   ZGP3B(:,1,:,:) = GET_INPUT_FIELD(IMY_PROC, IGPTOTG, IGPBLKS, 1)
   ALLOCATE(ZSPSC3B(1,ISPEC2,1))
+
+ #if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
 
   CALL DIR_TRANS(PGP3B=ZGP3B, PSPSC3B=ZSPSC3B, KPROMA=JPPROMA)
 
@@ -402,6 +442,14 @@ INTEGER FUNCTION ECTRANS_TEST_TRANS_API_DIR_TRANS_CALL_MODE_2_WIND_1() RESULT(KR
   ZGPUV(:,1,:,:) = ROTATIONAL_WIND(IGPBLKS, I_REGIONS_NS, I_REGIONS_EW)
   ALLOCATE(ZSPVOR(1,ISPEC2))
   ALLOCATE(ZSPDIV(1,ISPEC2))
+
+ #if defined(OMPGPU)
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+   call doublestack_init(.true.)
+#else
+   call doublestack_init(.false.) 
+#endif  
 
   CALL DIR_TRANS(PGPUV=ZGPUV, PSPVOR=ZSPVOR, PSPDIV=ZSPDIV, KPROMA=JPPROMA)
 

@@ -45,7 +45,7 @@ use oml_mod ,only : oml_max_threads
 use mpl_module
 use yomgstats, only: jpmaxstat
 use yomhook, only : dr_hook_init
-
+use mpl_doublestack_mod, only : mpl_doublestack,doublestack_init
 implicit none
 
 ! Number of points in top/bottom latitudes
@@ -414,6 +414,16 @@ endif
 ! Calculate number of NPROMA blocks
 ngpblks = (ngptot - 1)/nproma+1
 
+#if defined(OMPGPU)
+  write (0,*) "calling doublestack_init for gpu"
+  call doublestack_init(.true.)
+#elif defined(ACCGPU)
+  write (0,*) "calling doublestack_init for gpu"
+   call doublestack_init(.true.)
+#else
+  write (0,*) "calling doublestack_init for cpu"
+   call doublestack_init(.false.) 
+#endif
 !===================================================================================================
 ! Print information before starting
 !===================================================================================================

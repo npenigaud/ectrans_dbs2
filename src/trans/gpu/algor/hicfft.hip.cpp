@@ -183,6 +183,8 @@ void run_group_graph(typename Type::real *data_real,
     // we should cache this...
     std::cout << "WARNING FFT: POINTER CHANGE --> THIS MIGHT BE SLOW"
               << std::endl;
+    std::cout << "Pointers: " << ptrs->second.first << ", "  << ptrs->second.second 
+              << " vs. " << data_real << ", " << data_complex << std::endl;
     graphCache.erase(key);
     ptrCache.erase(key);
   }
