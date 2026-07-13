@@ -219,12 +219,12 @@ jobs:
         recreate_cache: ${{ matrix.caching == false }}
         dependencies: |
           ecmwf/ecbuild
-          npenigaud/fiat_dbls2
+          npenigaud/fiat_dbs2
         dependency_branch: 
           ecmwf-ecbuild: develop
-          npenigaud/fiat_dbls2: release_2.0.0_doublestack_essai
+          npenigaud/fiat_dbs2: release_2.0.0_doublestack_essai
         dependency_cmake_options: |
-          npenigaud/fiat_dbls2: "-G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DENABLE_TESTS=OFF -DENABLE_MPI=ON"
+          npenigaud/fiat_dbs2: "-G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DENABLE_TESTS=OFF -DENABLE_MPI=ON"
         cmake_options:    "-G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ${{ matrix.cmake_options }} -DENABLE_MPI=ON -DENABLE_FFTW=ON -DENABLE_ETRANS=ON"
         ctest_options: "${{ matrix.ctest_options }}"
 

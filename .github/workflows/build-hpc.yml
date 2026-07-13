@@ -111,7 +111,7 @@ jobs:
             dependencies:
               ecmwf/ecbuild:
                 version: develop
-              npenigaud/fiat_dbls2:
+              npenigaud/fiat_dbs2:
                 version: release_2.0.0_doublestack_essai
                 cmake_options:
                   - -DENABLE_MPI=ON
