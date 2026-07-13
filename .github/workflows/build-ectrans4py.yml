@@ -65,7 +65,8 @@ jobs:
     - name: Checkout FIAT
       uses: actions/checkout@v4
       with:
-        repository: ecmwf-ifs/fiat
+        repository: npenigaud/fiat_dbls2
+        version : release_2.0.0_doublestack_essai
         path: fiat
 
     - name: Checkout ecTrans
