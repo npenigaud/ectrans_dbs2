@@ -111,6 +111,8 @@ jobs:
             dependencies:
               ecmwf/ecbuild:
                 version: develop
+              ecmwf/fckit:
+                version: develop
               npenigaud/fiat_dbs2:
                 version: release_2.0.0_doublestack_essai
                 cmake_options:
