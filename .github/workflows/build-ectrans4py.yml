@@ -62,6 +62,12 @@ jobs:
         repository: ecmwf/ecbuild
         path: ecbuild
 
+    - name: Checkout fckit
+      uses: actions/checkout@v4
+      with:
+        repository: ecmwf/fckit
+        path: fckit
+
     - name: Checkout FIAT
       uses: actions/checkout@v4
       with:
@@ -89,6 +95,12 @@ jobs:
         fi
 
         printenv
+
+    - name: Install fckit
+      run:  |
+        cmake -B $GITHUB_WORKSPACE/fckit/build -S $GITHUB_WORKSPACE/fckit
+        cmake --build $GITHUB_WORKSPACE/fckit/build
+        echo "fckit_ROOT=$GITHUB_WORKSPACE/fckit/build" >> $GITHUB_ENV
 
     - name: Install FIAT
       run:  |
