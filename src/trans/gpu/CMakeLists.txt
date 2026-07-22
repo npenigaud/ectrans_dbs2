@@ -174,10 +174,11 @@ foreach( prec dp sp )
           target_compile_definitions( ectrans_gpu_${prec} PRIVATE TRANS_SINGLE PARKINDTRANS_SINGLE )
         endif()
 
-        # cuFFT can do in-place FFT, hipFFT cannot
-        if( HAVE_CUDA )
-          target_compile_definitions( ectrans_gpu_${prec} PRIVATE IN_PLACE_FFT )
-        endif()
+#        # cuFFT can do in-place FFT, hipFFT cannot
+#        if( HAVE_CUDA )
+#          target_compile_definitions( ectrans_gpu_${prec} PRIVATE IN_PLACE_FFT )
+#        endif()
+
 
         if( HAVE_OMP AND CMAKE_Fortran_COMPILER_ID MATCHES Cray )
           # Propagate flags as link options for downstream targets. Only required for Cray
