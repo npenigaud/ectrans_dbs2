@@ -94,7 +94,6 @@ MODULE PRFI1B_MOD
   ELSE
 
     !loop over wavenumber
-
 #ifdef OMPGPU
     !$OMP TARGET TEAMS DISTRIBUTE PARALLEL DO COLLAPSE(3) DEFAULT(NONE) &
     !$OMP& PRIVATE(KM,IASM0,INM) SHARED(KFIELDS,KDIM,D,R,PIA,PSPEC) MAP(TO:KFIELDS)
@@ -137,7 +136,6 @@ MODULE PRFI1B_MOD
 #ifdef OMPGPU
   !$OMP END TARGET DATA
 #endif
-
   END ASSOCIATE
 
   !     ------------------------------------------------------------------

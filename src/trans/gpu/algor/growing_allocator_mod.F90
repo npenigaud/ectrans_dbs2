@@ -50,10 +50,11 @@ CONTAINS
 
     IF (.NOT. ASSOCIATED(ALLOC%PTR)) THEN
 #ifdef OMPGPU
-      DEVICE_NUM = OMP_GET_DEFAULT_DEVICE()
-      DEV_PTR = OMP_TARGET_ALLOC(SZ, DEVICE_NUM)
-      CALL C_F_POINTER(DEV_PTR, ALLOC%PTR, [SZ])
-      IERR = OMP_TARGET_ASSOCIATE_PTR(C_LOC(ALLOC%PTR), DEV_PTR, SZ, 0_C_SIZE_T, DEVICE_NUM)
+!!commented out to avoid "omp_target_associate_ptr called with invalid arguments" non-blocking error
+!      DEVICE_NUM = OMP_GET_DEFAULT_DEVICE()
+!      DEV_PTR = OMP_TARGET_ALLOC(SZ, DEVICE_NUM)
+!      CALL C_F_POINTER(DEV_PTR, ALLOC%PTR, [SZ])
+!      IERR = OMP_TARGET_ASSOCIATE_PTR(C_LOC(ALLOC%PTR), DEV_PTR, SZ, 0_C_SIZE_T, DEVICE_NUM)
 #endif
 #ifdef ACCGPU
       ALLOCATE(ALLOC%PTR(SZ))
@@ -116,8 +117,9 @@ CONTAINS
                                       SIZE(ALLOC%PTR, 1, C_SIZE_T))
       ENDDO
 #ifdef OMPGPU
-      DEVICE_NUM = OMP_GET_DEFAULT_DEVICE()
-      CALL OMP_TARGET_FREE(C_LOC(ALLOC%PTR), DEVICE_NUM)
+!!commented out to avoid "omp_target_associate_ptr called with invalid arguments" non-blocking error above
+!      DEVICE_NUM = OMP_GET_DEFAULT_DEVICE()
+!      CALL OMP_TARGET_FREE(C_LOC(ALLOC%PTR), DEVICE_NUM)
 #endif
 #ifdef ACCGPU
       !$ACC EXIT DATA DELETE(ALLOC%PTR)

@@ -7,6 +7,7 @@
 # nor does it submit to any jurisdiction.
 
 # Tests for adjoint functionality
+add_compile_options( -fopenmp --offload-arch=gfx90a)
 
 foreach( precision ${precisions} )
 
@@ -22,7 +23,7 @@ foreach( precision ${precisions} )
   )
 
   foreach( platform ${platforms} )
-
+    add_compile_options( -fopenmp --offload-arch=gfx90a)
     if( "${platform}" MATCHES "cpu" )
       set( platform_tag "" )
     endif()
