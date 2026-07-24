@@ -203,7 +203,6 @@ real(kind=jprb), allocatable :: global_field(:,:)
 #include "trans_end.h"
 
 !===================================================================================================
-
 luse_mpi = detect_mpirun()
 if (VERSION == "gpu") then
   lpinning = .true.
@@ -231,7 +230,6 @@ else
   lsync_trans = .false.
 endif
 nthread = oml_max_threads()
-
 call dr_hook_init()
 
 !===================================================================================================
@@ -343,7 +341,6 @@ nflevl = numll(mysetv)
 
 ivsetsc2(1) = iprused
 ifld = 0
-
 !===================================================================================================
 ! Setup allocation strategy
 !===================================================================================================
@@ -373,19 +370,16 @@ endif
 !===================================================================================================
 
 if (verbosity >= 1) write(nout,'(a)')'======= Setup ecTrans ======='
-
 call gstats(1, 0)
 call setup_trans0(kout=nout, kerr=nerr, kprintlev=merge(2, 0, verbosity == 1), kpromatr=npromatr, &
   &               kprgpns=nprgpns, kprgpew=nprgpew, kprtrw=nprtrw, ldsync_trans=lsync_trans,  &
   &               ldeq_regions=leq_regions, ldalloperm=.true., ldmpoff=.not.luse_mpi,         &
   &               kopt_memory_tr=nopt_mem_tr)
 call gstats(1, 1)
-
 call gstats(2, 0)
 call setup_trans(ksmax=nsmax, kdgl=ndgl, kloen=nloen, ldsplit=.true., lduserpnm=luserpnm, &
   &              lduseflt=luseflt)
 call gstats(2, 1)
-
 call trans_inq(kspec2=nspec2, kspec2g=nspec2g, kgptot=ngptot, kgptotg=ngptotg)
 
 if (nproma == 0) then ! no blocking (default when not specified)
@@ -445,13 +439,11 @@ do jb = 1, nprtrv
     ivset(ilev) = jb
   enddo
 enddo
-
 ! Initialize vorticity and divergence - same for both call modes
 call allocator%allocate('zspvor', zspvor, [nflevl,nspec2])
 call allocator%allocate('zspdiv', zspdiv, [nflevl,nspec2])
 call initialize_spectral_field(nsmax, zspvor)
 call initialize_spectral_field(nsmax, zspdiv)
-
 ! Initialize spectral arrays differently depending on call mode
 if (icall_mode == 1) then
   ! Compute spectral distribution variables for call mode 1's combined 2D/3D spectral array
@@ -609,7 +601,6 @@ endif
 !===================================================================================================
 ! Do spectral transform loop
 !===================================================================================================
-
 gstats_lstats = .false.
 
 write(nout,'(a,i0,a,i0,a)') 'Running for ', iters, ' iterations with ', iters_warmup, &
@@ -631,12 +622,12 @@ do jstep = 1, iters+iters_warmup
 
   ztstep1(jstep) = timef()
   call gstats(4,0)
+
   if (icall_mode == 1) then
     call inv_trans(pspvor=zspvor, pspdiv=zspdiv, pspscalar=zspscalar, pgp=zgp, &
       &            kvsetuv=ivset, kvsetsc=ivsetsc, &
       &            ldscders=lscders, ldvorgp=lvordiv, lddivgp=lvordiv, lduvder=luvder, &
       &            kproma=nproma)
-
     if (ldump_checksums) then
       ! Remove trash at end of last block
       iend = ngptot - nproma * (ngpblks - 1)

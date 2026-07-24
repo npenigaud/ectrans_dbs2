@@ -7,6 +7,7 @@
 # nor does it submit to any jurisdiction.
 
 # Tests for adjoint functionality
+add_compile_options( -fopenmp --offload-arch=gfx90a)
 
 foreach( precision ${precisions} )
 
@@ -14,15 +15,17 @@ foreach( precision ${precisions} )
     TARGET           adjoint_utils_${precision}
     LINKER_LANGUAGE  Fortran
     SOURCES          utils.F90
-    PUBLIC_LIBS      fiat trans_${precision}
+    PUBLIC_LIBS      fiat trans_${precision} omptarget
   )
+        target_compile_options(adjoint_utils_${precision} PUBLIC -fopenmp --offload-arch=gfx90a )
+        target_link_options(adjoint_utils_${precision} PUBLIC -fopenmp --offload-arch=gfx90a )
   ecbuild_target_fortran_module_directory(
     TARGET adjoint_utils_${precision}
     MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests/trans/adjoint/module/adjoint_utils_${precision}
   )
 
   foreach( platform ${platforms} )
-
+    add_compile_options( -fopenmp --offload-arch=gfx90a)
     if( "${platform}" MATCHES "cpu" )
       set( platform_tag "" )
     endif()
