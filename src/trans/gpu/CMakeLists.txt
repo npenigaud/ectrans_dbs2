@@ -74,8 +74,8 @@ ecbuild_add_library(
                        $<${HAVE_GPU_GRAPHS_FFT}:USE_GRAPHS_FFT>
 )
 
-target_compile_options(ectrans_gpu_common PRIVATE -fopenmp --offload-arch=gfx90a )
-target_link_options(ectrans_gpu_common PRIVATE -fopenmp --offload-arch=gfx90a )
+target_compile_options(ectrans_gpu_common PRIVATE -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
+target_link_options(ectrans_gpu_common PRIVATE -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
 
 ecbuild_target_fortran_module_directory(
   TARGET                   ectrans_gpu_common
@@ -143,8 +143,8 @@ foreach( prec dp sp )
         set_source_files_properties( ${GENERATED_SOURCE_DIR}/internal/ftdir_mod.F90 PROPERTIES COMPILE_OPTIONS "-O2" )
         ecbuild_info("warn: special compile flags ftdir_mod.F90")
         #endif()
-        add_compile_options(-fopenmp --offload-arch=gfx90a)
-        add_link_options(-fopenmp --offload-arch=gfx90a)
+        add_compile_options(-fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES})
+        add_link_options(-fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES})
 
         ecbuild_add_library(
           TARGET               ectrans_gpu_${prec}
@@ -169,8 +169,8 @@ foreach( prec dp sp )
                                $<${HAVE_GPU_AWARE_MPI}:USE_GPU_AWARE_MPI>
                                $<${USE_RAW_MPI}:USE_RAW_MPI>
         )
-        target_compile_options(ectrans_gpu_${prec} PUBLIC -fopenmp --offload-arch=gfx90a )
-        target_link_options(ectrans_gpu_${prec} PUBLIC -fopenmp --offload-arch=gfx90a )
+        target_compile_options(ectrans_gpu_${prec} PUBLIC -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
+        target_link_options(ectrans_gpu_${prec} PUBLIC -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
  
         ecbuild_target_fortran_module_directory(
           TARGET                   ectrans_gpu_${prec}
@@ -207,7 +207,7 @@ foreach( prec dp sp )
         target_include_directories( trans_gpu_${prec} INTERFACE $<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIR}/trans_gpu_${prec}> )
         target_include_directories( trans_gpu_${prec} INTERFACE $<INSTALL_INTERFACE:include/ectrans/trans_gpu_${prec}> )
         target_link_libraries( trans_gpu_${prec} INTERFACE fiat ectrans_gpu_${prec} parkind_${prec})
-        target_compile_options( trans_gpu_${prec} INTERFACE -fopenmp --offload-arch=gfx90a )
+        target_compile_options( trans_gpu_${prec} INTERFACE -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
         target_link_libraries(trans_gpu_${prec} INTERFACE omptarget)
         # ## Install trans_gpu_${prec} interface
         # file( GLOB trans_interface ${PROJECT_SOURCE_DIR}/src/trans/include/ectrans/* )
