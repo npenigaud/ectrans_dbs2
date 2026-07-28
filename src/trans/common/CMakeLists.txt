@@ -71,8 +71,8 @@ ecbuild_add_library(
                    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/trans/include/ectrans>
                    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/trans/include>
 )
-target_compile_options(ectrans_common PUBLIC -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
-target_link_options(ectrans_common PUBLIC -fopenmp --offload-arch=${CMAKE_HIP_ARCHITECTURES} )
+target_compile_options(ectrans_common PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+target_link_options(ectrans_common PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
 ecbuild_target_fortran_module_directory(
   TARGET                   ectrans_common
   MODULE_DIRECTORY         ${CMAKE_BINARY_DIR}/module/ectrans
