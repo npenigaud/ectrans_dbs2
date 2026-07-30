@@ -626,6 +626,41 @@ write(nout,'(a,i0,a,i0,a)') 'Running for ', iters, ' iterations with ', iters_wa
   & ' extra warm-up iterations'
 write(nout,'(" ")')
 
+  WRITE (0,*) "CALLING INV_TRANS, LCOMPUTE=.FALSE."
+  if (icall_mode == 1) then
+    call inv_trans(pspvor=zspvor, pspdiv=zspdiv, pspscalar=zspscalar, pgp=zgp, &
+      &            kvsetuv=ivset, kvsetsc=ivsetsc, &
+      &            ldscders=lscders, ldvorgp=lvordiv, lddivgp=lvordiv, lduvder=luvder, &
+      &            kproma=nproma,LDCOMPUTE=.FALSE.)
+
+  else
+    call inv_trans(pspvor=zspvor, pspdiv=zspdiv, pspsc3a=zspsc3a, pspsc2=zspsc2, pgpuv=zgpuv, &
+      &            pgp3a=zgp3a, pgp2=zgp2, &
+      &            kvsetuv=ivset, kvsetsc2=ivsetsc2, kvsetsc3a=ivset, &
+      &            ldscders=lscders, ldvorgp=lvordiv, lddivgp=lvordiv, lduvder=luvder, kproma=nproma,LDCOMPUTE=.FALSE.)
+
+  endif
+  WRITE (0,*) "NEW COMPUTED SIZE BYTES",MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES
+  WRITE (0,*) "OLD SIZE :",  MPL_DOUBLESTACK%INDEX_UP_0
+  IF (MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES .GT. MPL_DOUBLESTACK%INDEX_UP_0) WRITE (0,*) "CHANGING SIZE"
+  IF (MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES .GT. MPL_DOUBLESTACK%INDEX_UP_0) CALL MPL_DOUBLESTACK%REALLOC(MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES,MPL_DOUBLESTACK%LLGPU)
+
+  WRITE (0,*) "CALLING DIR_TRANS, LCOMPUTE=.FALSE."
+  if (icall_mode == 1) then
+    call dir_trans(pgp=zgp(:,ipgp_start:ipgp_end,:), pspvor=zspvor, pspdiv=zspdiv, &
+      &            pspscalar=zspscalar, kvsetuv=ivset, kvsetsc=ivsetsc, kproma=nproma,LDCOMPUTE=.FALSE.)
+  else
+    call dir_trans(pgpuv=zgpuv(:,:,ipgpuv_start:ipgpuv_end,:), &
+      &            pgp3a=zgp3a(:,:,1:nfld,:), pgp2=zgp2(:,1:1,:), &
+      &            pspvor=zspvor, pspdiv=zspdiv, pspsc3a=zspsc3a, pspsc2=zspsc2, &
+      &            kvsetuv=ivset, kvsetsc2=ivsetsc2, kvsetsc3a=ivset, kproma=nproma,LDCOMPUTE=.FALSE.)
+  endif
+  WRITE (0,*) "NEW COMPUTED SIZE BYTES",MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES
+  WRITE (0,*) "OLD SIZE :",  MPL_DOUBLESTACK%INDEX_UP_0
+  IF (MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES .GT. MPL_DOUBLESTACK%INDEX_UP_0) WRITE (0,*) "CHANGING SIZE"
+  IF (MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES .GT. MPL_DOUBLESTACK%INDEX_UP_0) CALL MPL_DOUBLESTACK%REALLOC(MPL_DOUBLESTACK%NEW_COMPUTED_SIZE_BYTES,MPL_DOUBLESTACK%LLGPU)
+  CALL FLUSH(0)
+
 do jstep = 1, iters+iters_warmup
   if (jstep == iters_warmup + 1) then
     gstats_lstats = .true.
