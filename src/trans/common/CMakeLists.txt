@@ -64,15 +64,17 @@ ecbuild_add_library(
   TARGET           ectrans_common
   LINKER_LANGUAGE  Fortran
   SOURCES          ${ectrans_common_src}
-  PUBLIC_LIBS      fiat omptarget
+  PUBLIC_LIBS      fiat $<${HAVE_OMP}:omptarget>
   PRIVATE_LIBS     ${LAPACK_LIBRARIES}
   PUBLIC_INCLUDES  $<INSTALL_INTERFACE:include/ectrans>
                    $<INSTALL_INTERFACE:include>
                    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/trans/include/ectrans>
                    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/trans/include>
 )
-target_compile_options(ectrans_common PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-target_link_options(ectrans_common PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+if( HAVE_OMP )
+  target_compile_options(ectrans_common PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+  target_link_options(ectrans_common PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+endif()
 ecbuild_target_fortran_module_directory(
   TARGET                   ectrans_common
   MODULE_DIRECTORY         ${CMAKE_BINARY_DIR}/module/ectrans

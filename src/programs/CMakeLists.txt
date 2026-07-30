@@ -33,8 +33,10 @@ foreach( program ectrans-benchmark )
   endif()
 
   if( HAVE_GPU )
-    add_compile_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
-    add_link_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
+    if( HAVE_OMP )
+      add_compile_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
+      add_link_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
+    endif()
     list( APPEND util_PRIVATE_DEFINITIONS
       $<${HAVE_CUDA}:CUDA>
       $<${HAVE_HIP}:HIP>
@@ -55,15 +57,17 @@ foreach( program ectrans-benchmark )
                                   $<${HAVE_ACC}:OpenACC::OpenACC_Fortran>
                                   $<${HAVE_OMP}:OpenMP::OpenMP_Fortran>
                                   ${util_PRIVATE_LIBRARIES}
-                                  omptarget
+                                  $<${HAVE_OMP}:omptarget>
                                 DEFINITIONS
                                   VERSION="gpu"
                                   ${util_PRIVATE_DEFINITIONS}
                                   ${GPU_OFFLOAD}GPU
         )
         ecbuild_target_fortran_module_directory(TARGET ${program}-gpu-${prec} MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/module/${program}-gpu-${prec} )
-        target_compile_options(${program}-gpu-${prec} PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-        target_link_options(${program}-gpu-${prec} PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+        if( HAVE_OMP )
+          target_compile_options(${program}-gpu-${prec} PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+          target_link_options(${program}-gpu-${prec} PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
+        endif()
       endif()
     endforeach( prec )
   endif( HAVE_GPU )
@@ -84,8 +88,10 @@ if( HAVE_ETRANS )
                                 $<${HAVE_OMP}:OpenMP::OpenMP_Fortran>
                             )
     endif()
-    add_compile_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
-    add_link_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
+    if( HAVE_OMP )
+      add_compile_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
+      add_link_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
+    endif()
 
     if( HAVE_ETRANS_GPU )
       list( APPEND util_PRIVATE_DEFINITIONS
