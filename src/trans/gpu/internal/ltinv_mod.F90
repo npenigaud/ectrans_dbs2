@@ -292,6 +292,10 @@ CONTAINS
 !        & IALLOC_POS, IALLOC_SZ)
     CALL MPL_DOUBLESTACK%ALLOCATE(ZOUTS0,[IOUT0_SIZE],SIDE_PARAM=MPL_DOUBLESTACK%CURRENT_SIDE,LD_ALLOC=LLCOMPUTE)
     IALLOC_POS = IALLOC_POS + IALLOC_SZ
+
+
+IF (LLCOMPUTE) THEN
+
     ! Assign pointers do the different components of PIA
     IFIRST = 0
     IF (.NOT. LVORGP .OR. LDIVGP) THEN
@@ -323,7 +327,6 @@ CONTAINS
 
     !     ------------------------------------------------------------------
 
-IF (LLCOMPUTE) THEN
     !*       3.    SPECTRAL COMPUTATIONS FOR U,V AND DERIVATIVES.
     !              ----------------------------------------------
 

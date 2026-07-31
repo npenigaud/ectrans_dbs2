@@ -7,9 +7,6 @@
 # nor does it submit to any jurisdiction.
 
 # Tests for adjoint functionality
-if( HAVE_OMP )
-  add_compile_options( -fopenmp --offload-arch=${HIP_ARCH_LIST})
-endif()
 
 foreach( precision ${precisions} )
 
@@ -25,9 +22,7 @@ foreach( precision ${precisions} )
   )
 
   foreach( platform ${platforms} )
-    if( HAVE_OMP )
-      add_compile_options( -fopenmp --offload-arch=${HIP_ARCH_LIST})
-    endif()
+
     if( "${platform}" MATCHES "cpu" )
       set( platform_tag "" )
     endif()

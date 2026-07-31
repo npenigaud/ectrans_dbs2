@@ -66,17 +66,12 @@ ecbuild_add_library(
                        $<${HAVE_ACC}:OpenACC::OpenACC_Fortran>
                        $<${HAVE_OMP}:OpenMP::OpenMP_Fortran>
                        $<${HAVE_CUTLASS}:nvidia::cutlass::cutlass>
-                       $<${HAVE_OMP}:omptarget>
   PRIVATE_DEFINITIONS  ${GPU_RUNTIME}GPU ${GPU_OFFLOAD}GPU
                        $<${HAVE_CUTLASS}:USE_CUTLASS>
                        $<${HAVE_CUTLASS_3XTF32}:USE_CUTLASS_3XTF32>
                        $<${HAVE_GPU_GRAPHS_GEMM}:USE_GRAPHS_GEMM>
                        $<${HAVE_GPU_GRAPHS_FFT}:USE_GRAPHS_FFT>
 )
-if( HAVE_OMP ) 
-  target_compile_options(ectrans_gpu_common PRIVATE -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-  target_link_options(ectrans_gpu_common PRIVATE -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-endif()
 
 ecbuild_target_fortran_module_directory(
   TARGET                   ectrans_gpu_common
@@ -144,10 +139,7 @@ foreach( prec dp sp )
         set_source_files_properties( ${GENERATED_SOURCE_DIR}/internal/ftdir_mod.F90 PROPERTIES COMPILE_OPTIONS "-O2" )
         ecbuild_info("warn: special compile flags ftdir_mod.F90")
         #endif()
-        if( HAVE_OMP )
-          add_compile_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
-          add_link_options(-fopenmp --offload-arch=${HIP_ARCH_LIST})
-        endif()
+
 
         ecbuild_add_library(
           TARGET               ectrans_gpu_${prec}
@@ -163,7 +155,6 @@ foreach( prec dp sp )
                                $<${HAVE_ACC}:OpenACC::OpenACC_Fortran>
                                $<${HAVE_OMP}:OpenMP::OpenMP_Fortran>
                                $<${USE_RAW_MPI}:MPI::MPI_Fortran>
-                               $<${HAVE_OMP}:omptarget>
           PRIVATE_DEFINITIONS  ${GPU_RUNTIME}GPU ${GPU_OFFLOAD}GPU
                                $<${HAVE_CUTLASS}:USE_CUTLASS>
                                $<${HAVE_CUTLASS_3XTF32}:USE_CUTLASS_3XTF32>
@@ -172,11 +163,7 @@ foreach( prec dp sp )
                                $<${HAVE_GPU_AWARE_MPI}:USE_GPU_AWARE_MPI>
                                $<${USE_RAW_MPI}:USE_RAW_MPI>
         )
-        if( HAVE_OMP )
-          target_compile_options(ectrans_gpu_${prec} PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-          target_link_options(ectrans_gpu_${prec} PUBLIC -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-        endif()
- 
+
         ecbuild_target_fortran_module_directory(
           TARGET                   ectrans_gpu_${prec}
           MODULE_DIRECTORY         ${CMAKE_BINARY_DIR}/module/ectrans
@@ -187,11 +174,12 @@ foreach( prec dp sp )
           target_compile_definitions( ectrans_gpu_${prec} PRIVATE TRANS_SINGLE PARKINDTRANS_SINGLE )
         endif()
 
-#        # cuFFT can do in-place FFT, hipFFT cannot ; attempt to use it also with hipFFT
+        # cuFFT can do in-place FFT, hipFFT cannot
+        if( HAVE_CUDA )
           target_compile_definitions( ectrans_gpu_${prec} PRIVATE IN_PLACE_FFT )
+        endif()
 
-
-        if( HAVE_OMP )
+        if( HAVE_OMP AND CMAKE_Fortran_COMPILER_ID MATCHES Cray )
           # Propagate flags as link options for downstream targets. Only required for Cray
           target_link_options( ectrans_gpu_${prec} INTERFACE
                 $<$<LINK_LANGUAGE:Fortran>:SHELL:${OpenMP_Fortran_FLAGS}>
@@ -211,11 +199,9 @@ foreach( prec dp sp )
         ecbuild_add_library( TARGET trans_gpu_${prec} TYPE INTERFACE )
         target_include_directories( trans_gpu_${prec} INTERFACE $<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIR}/trans_gpu_${prec}> )
         target_include_directories( trans_gpu_${prec} INTERFACE $<INSTALL_INTERFACE:include/ectrans/trans_gpu_${prec}> )
-        if( HAVE_OMP )
-          target_link_libraries( trans_gpu_${prec} INTERFACE fiat ectrans_gpu_${prec} parkind_${prec})
-          target_compile_options( trans_gpu_${prec} INTERFACE -fopenmp --offload-arch=${HIP_ARCH_LIST} )
-          target_link_libraries(trans_gpu_${prec} INTERFACE omptarget)
-        endif()
+        target_link_libraries( trans_gpu_${prec} INTERFACE fiat ectrans_gpu_${prec} parkind_${prec})
+
+
         # ## Install trans_gpu_${prec} interface
         # file( GLOB trans_interface ${PROJECT_SOURCE_DIR}/src/trans/include/ectrans/* )
         # install(
