@@ -98,10 +98,11 @@ INTEGER(KIND=JPIM) :: IVSET(KF_GP)
 INTEGER(KIND=JPIM) :: IFGP2,IFGP3A,IFGP3B,IOFF,J3
 LOGICAL :: LLCOMPUTE
 !     ------------------------------------------------------------------
+
+
 LLCOMPUTE=.TRUE.
 IF (PRESENT(LDCOMPUTE)) LLCOMPUTE=LDCOMPUTE
 ! Field distribution in Spectral/Fourier space
-
 IF(PRESENT(KVSETUV)) THEN
   IVSETUV(:) = KVSETUV(:)
 ELSE
@@ -152,7 +153,7 @@ ELSE
 ! Now, force the OS to allocate this shared array right now, not when it starts
 ! to be used which is an OPEN-MP loop, that would cause a threads
 ! synchronization lock :
-  IF (KF_FS > 0 .AND. D%NLENGTF > 0) THEN
+  IF (KF_FS > 0 .AND. D%NLENGTF > 0 .AND. LLCOMPUTE) THEN
     ZGTF_HEAP(1,1)=HUGE(1._JPRB)
   ENDIF
   ZGTF => ZGTF_HEAP(:,:)
@@ -178,7 +179,7 @@ IBLEN=D%NLENGT0B*2*KF_FS
 !!  ALLOCATE(FOUBUF_IN(MAX(1,IBLEN)))
 !!ENDIF
 CALL MPL_DOUBLESTACK%NEXT_SIDE()
-CALL MPL_DOUBLESTACK%ALLOCATE(FOUBUF_IN,[MAX(1,IBLEN)],SIDE_PARAM=MPL_DOUBLESTACK%CURRENT_SIDE,LD_ALLOC=LLCOMPUTE)
+CALL MPL_DOUBLESTACK%ALLOCATE(FOUBUF_IN,[MAX(1,IBLEN)])
 !CALL MPL_DOUBLESTACK%ALLOCATE(FOUBUF_IN,MPL_UPPER,[MAX(1,IBLEN)])
 
 IF (LLCOMPUTE) THEN
@@ -197,9 +198,10 @@ IF (KF_FS > 0) THEN
   !$OMP END PARALLEL DO
 ENDIF
 CALL GSTATS(1640, 1)
+ENDIF
 
 CALL GSTATS(106,1)
-ENDIF
+
 !     ------------------------------------------------------------------
 
 END SUBROUTINE FTDIR_CTL

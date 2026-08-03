@@ -609,7 +609,8 @@ ztloop = timef()
 !===================================================================================================
 ! Do spectral transform loop
 !===================================================================================================
-
+write (0,*) "AFFICHAGE IN ECTRANS-BENCHMARK-IFS"
+call flush(0)
 do jstep = 1, iters
   call gstats(3,0)
   ztstep(jstep) = timef()
